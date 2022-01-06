@@ -1,0 +1,1 @@
+typedef void (*deleter_t)(void*);

@@ -1,23 +1,24 @@
-#include <list.h>
+#include <cstlike/list.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 
-typedef struct T_Item
+typedef struct T_ListItem
 {
     void* content;
-    Item* previous;
-    Item* next;
+    ListItem* previous;
+    ListItem* next;
     List* list;
-} Item;
+} ListItem;
 
 typedef struct T_List
 {
     void (*deleter)(void*);
-    Item* first;
-    Item* last;
+    ListItem* first;
+    ListItem* last;
 } List;
 
-void list_item_init(Item* item, List* list, void* content, Item* next, Item* previous);
+void list_item_init(ListItem* item, List* list, void* content, ListItem* next, ListItem* previous);
 
 //List
 List* list_new(deleter_t d)
@@ -38,9 +39,9 @@ void list_free(List* list)
 }
 void list_clear(List* list)
 {
-    for(Item* it=list->first;it!=NULL;)
+    for(ListItem* it=list->first;it!=NULL;)
     {
-        Item* newit = it->next;
+        ListItem* newit = it->next;
         if (list->deleter)
             list->deleter(it->content);
         it = newit;
@@ -52,7 +53,7 @@ void list_push_front(List* list, void* content)
 {
     if (list->first==NULL)
     {
-        list->first = list->last = (Item*)malloc(sizeof(Item));
+        list->first = list->last = (ListItem*)malloc(sizeof(ListItem));
         list_item_init(list->first, list, content, NULL, NULL);
     }
     else
@@ -62,25 +63,25 @@ void list_push_back(List* list, void* content)
 {
     if (list->first==NULL)
     {
-        list->first = list->last = (Item*)malloc(sizeof(Item));
+        list->first = list->last = (ListItem*)malloc(sizeof(ListItem));
         list_item_init(list->first, list, content, NULL, NULL);
     }
     else
         list_item_insert_after(list->last, content);
 }
-const Item* list_get_first_item(const List* list)
+const ListItem* list_get_first_item(const List* list)
 {
     return list->first;
 }
-const Item* list_get_last_item(const List* list)
+const ListItem* list_get_last_item(const List* list)
 {
     return list->last;
 }
-Item* list_get_first_item_mut(List* list)
+ListItem* list_get_first_item_mut(List* list)
 {
     return list->first;
 }
-Item* list_get_last_item_mut(List* list)
+ListItem* list_get_last_item_mut(List* list)
 {
     return list->last;
 }
@@ -91,39 +92,39 @@ deleter_t list_get_deleter(const List* list)
 size_t list_size(const List* list)
 {
     size_t i=0;
-    for(Item* it=list->first;it!=NULL;i++, it = it->next);
+    for(ListItem* it=list->first;it!=NULL;i++, it = it->next);
     return i;
 }
-const Item* list_find(const List* list, void* to_search)
+const ListItem* list_find(const List* list, void* to_search)
 {
-    for(const Item* it = list_get_first_item(list); it!=NULL; it = list_item_get_next(it))
+    for(const ListItem* it = list_get_first_item(list); it!=NULL; it = list_item_get_next(it))
     {
         if (it->content == to_search)
             return it;
     }
     return NULL;
 }
-Item* list_find_mut(List* list, void* to_search)
+ListItem* list_find_mut(List* list, void* to_search)
 {
-    for(Item* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
+    for(ListItem* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
     {
         if (it->content == to_search)
             return it;
     }
     return NULL;
 }
-const Item* list_find_if(const List* list, char(*callback_finder)(void*))
+const ListItem* list_find_if(const List* list, char(*callback_finder)(void*))
 {
-    for(const Item* it = list_get_first_item(list); it!=NULL; it = list_item_get_next(it))
+    for(const ListItem* it = list_get_first_item(list); it!=NULL; it = list_item_get_next(it))
     {
         if (callback_finder(it->content))
             return it;
     }
     return NULL;
 }
-Item* list_find_if_mut(List* list, char(*callback_finder)(void*))
+ListItem* list_find_if_mut(List* list, char(*callback_finder)(void*))
 {
-    for(Item* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
+    for(ListItem* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
     {
         if (callback_finder(it->content))
             return it;
@@ -132,19 +133,19 @@ Item* list_find_if_mut(List* list, char(*callback_finder)(void*))
 }
 
 
-void list_item_init(Item* item, List* list, void* content, Item* next, Item* previous)
+void list_item_init(ListItem* item, List* list, void* content, ListItem* next, ListItem* previous)
 {
     item->content = content;
     item->previous = previous;
     item->next = next;
     item->list = list;
 }
-void list_item_free(Item* item)
+void list_item_free(ListItem* item)
 {
     if (item->content && list_get_deleter(item->list))
         list_get_deleter(item->list)(item->content);
 }
-void list_item_remove(Item* item)
+void list_item_remove(ListItem* item)
 {
     list_item_free(item);
     if (item->list->first == item)
@@ -158,17 +159,17 @@ void list_item_remove(Item* item)
         item->next->previous = item->previous;
     free(item);
 }
-const void* list_item_get(const Item* item)
+const void* list_item_get(const ListItem* item)
 {
     return item->content;
 }
-void* list_item_get_mut(Item* item)
+void* list_item_get_mut(ListItem* item)
 {
     return item->content;
 }
-Item* list_item_insert_after(Item* item, void* content)
+ListItem* list_item_insert_after(ListItem* item, void* content)
 {
-    Item* new_item = (Item*)malloc(sizeof(Item));
+    ListItem* new_item = (ListItem*)malloc(sizeof(ListItem));
     list_item_init(new_item, item->list, content, item->next, item);
     if (item->next)
         item->next->previous = new_item;
@@ -177,9 +178,9 @@ Item* list_item_insert_after(Item* item, void* content)
     item->next = new_item;
     return new_item;
 }
-Item* list_item_insert_before(Item* item, void* content)
+ListItem* list_item_insert_before(ListItem* item, void* content)
 {
-    Item* new_item = (Item*)malloc(sizeof(Item));
+    ListItem* new_item = (ListItem*)malloc(sizeof(ListItem));
     list_item_init(new_item, item->list, content, item, item->previous);
     if (item->previous)
         item->previous->next = new_item;
@@ -188,15 +189,23 @@ Item* list_item_insert_before(Item* item, void* content)
     item->previous = new_item;
     return new_item;
 }
-Item* list_item_get_next(Item* item)
+const ListItem* list_item_get_next(const ListItem* item)
 {
     return item->next;
 }
-Item* list_item_get_previous(Item* item)
+const ListItem* list_item_get_previous(const ListItem* item)
 {
     return item->previous;
 }
-Item* list_item_advance(Item* item, int n)
+ListItem* list_item_get_next_mut(ListItem* item)
+{
+    return item->next;
+}
+ListItem* list_item_get_previous_mut(ListItem* item)
+{
+    return item->previous;
+}
+ListItem* list_item_advance(ListItem* item, int n)
 {
     if (n==0)
         return item;
