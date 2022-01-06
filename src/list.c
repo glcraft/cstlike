@@ -3,45 +3,45 @@
 #include <stdlib.h>
 
 
-typedef struct T_ListItem
+typedef struct cstl_list_item_t
 {
     void* content;
-    ListItem* previous;
-    ListItem* next;
-    List* list;
-} ListItem;
+    cstl_list_item* previous;
+    cstl_list_item* next;
+    cstl_list* list;
+} cstl_list_item;
 
-typedef struct T_List
+typedef struct cstl_list_t
 {
     void (*deleter)(void*);
-    ListItem* first;
-    ListItem* last;
-} List;
+    cstl_list_item* first;
+    cstl_list_item* last;
+} cstl_list;
 
-void list_item_init(ListItem* item, List* list, void* content, ListItem* next, ListItem* previous);
+void list_item_init(cstl_list_item* item, cstl_list* list, void* content, cstl_list_item* next, cstl_list_item* previous);
 
-//List
-List* list_new(deleter_t d)
+//cstl_list
+cstl_list* list_new(deleter_t d)
 {
-    List* res = malloc(sizeof(List));
+    cstl_list* res = malloc(sizeof(cstl_list));
     list_init(res, d);
     return res;
 }
-void list_init(List* list, void (*deleter)(void*))
+void list_init(cstl_list* list, void (*deleter)(void*))
 {
     list->deleter = deleter;
     list->first = list->last = NULL;
 }
-void list_free(List* list)
+void list_free(cstl_list* list)
 {
     list_clear(list);
     free(list);
 }
-void list_clear(List* list)
+void list_clear(cstl_list* list)
 {
-    for(ListItem* it=list->first;it!=NULL;)
+    for(cstl_list_item* it=list->first;it!=NULL;)
     {
-        ListItem* newit = it->next;
+        cstl_list_item* newit = it->next;
         if (list->deleter)
             list->deleter(it->content);
         it = newit;
@@ -49,82 +49,82 @@ void list_clear(List* list)
     list->first = list->last = NULL;
 }
 
-void list_push_front(List* list, void* content)
+void list_push_front(cstl_list* list, void* content)
 {
     if (list->first==NULL)
     {
-        list->first = list->last = (ListItem*)malloc(sizeof(ListItem));
+        list->first = list->last = (cstl_list_item*)malloc(sizeof(cstl_list_item));
         list_item_init(list->first, list, content, NULL, NULL);
     }
     else
         list_item_insert_before(list->first, content);
 }
-void list_push_back(List* list, void* content)
+void list_push_back(cstl_list* list, void* content)
 {
     if (list->first==NULL)
     {
-        list->first = list->last = (ListItem*)malloc(sizeof(ListItem));
+        list->first = list->last = (cstl_list_item*)malloc(sizeof(cstl_list_item));
         list_item_init(list->first, list, content, NULL, NULL);
     }
     else
         list_item_insert_after(list->last, content);
 }
-const ListItem* list_get_first_item(const List* list)
+const cstl_list_item* list_get_first_item(const cstl_list* list)
 {
     return list->first;
 }
-const ListItem* list_get_last_item(const List* list)
+const cstl_list_item* list_get_last_item(const cstl_list* list)
 {
     return list->last;
 }
-ListItem* list_get_first_item_mut(List* list)
+cstl_list_item* list_get_first_item_mut(cstl_list* list)
 {
     return list->first;
 }
-ListItem* list_get_last_item_mut(List* list)
+cstl_list_item* list_get_last_item_mut(cstl_list* list)
 {
     return list->last;
 }
-deleter_t list_get_deleter(const List* list)
+deleter_t list_get_deleter(const cstl_list* list)
 {
     return list->deleter;
 }
-size_t list_size(const List* list)
+size_t list_size(const cstl_list* list)
 {
     size_t i=0;
-    for(ListItem* it=list->first;it!=NULL;i++, it = it->next);
+    for(cstl_list_item* it=list->first;it!=NULL;i++, it = it->next);
     return i;
 }
-const ListItem* list_find(const List* list, void* to_search)
+const cstl_list_item* list_find(const cstl_list* list, void* to_search)
 {
-    for(const ListItem* it = list_get_first_item(list); it!=NULL; it = list_item_get_next(it))
+    for(const cstl_list_item* it = list_get_first_item(list); it!=NULL; it = list_item_get_next(it))
     {
         if (it->content == to_search)
             return it;
     }
     return NULL;
 }
-ListItem* list_find_mut(List* list, void* to_search)
+cstl_list_item* list_find_mut(cstl_list* list, void* to_search)
 {
-    for(ListItem* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
+    for(cstl_list_item* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
     {
         if (it->content == to_search)
             return it;
     }
     return NULL;
 }
-const ListItem* list_find_if(const List* list, char(*callback_finder)(void*))
+const cstl_list_item* list_find_if(const cstl_list* list, char(*callback_finder)(void*))
 {
-    for(const ListItem* it = list_get_first_item(list); it!=NULL; it = list_item_get_next(it))
+    for(const cstl_list_item* it = list_get_first_item(list); it!=NULL; it = list_item_get_next(it))
     {
         if (callback_finder(it->content))
             return it;
     }
     return NULL;
 }
-ListItem* list_find_if_mut(List* list, char(*callback_finder)(void*))
+cstl_list_item* list_find_if_mut(cstl_list* list, char(*callback_finder)(void*))
 {
-    for(ListItem* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
+    for(cstl_list_item* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
     {
         if (callback_finder(it->content))
             return it;
@@ -133,19 +133,19 @@ ListItem* list_find_if_mut(List* list, char(*callback_finder)(void*))
 }
 
 
-void list_item_init(ListItem* item, List* list, void* content, ListItem* next, ListItem* previous)
+void list_item_init(cstl_list_item* item, cstl_list* list, void* content, cstl_list_item* next, cstl_list_item* previous)
 {
     item->content = content;
     item->previous = previous;
     item->next = next;
     item->list = list;
 }
-void list_item_free(ListItem* item)
+void list_item_free(cstl_list_item* item)
 {
     if (item->content && list_get_deleter(item->list))
         list_get_deleter(item->list)(item->content);
 }
-void list_item_remove(ListItem* item)
+void list_item_remove(cstl_list_item* item)
 {
     list_item_free(item);
     if (item->list->first == item)
@@ -159,17 +159,17 @@ void list_item_remove(ListItem* item)
         item->next->previous = item->previous;
     free(item);
 }
-const void* list_item_get(const ListItem* item)
+const void* list_item_get(const cstl_list_item* item)
 {
     return item->content;
 }
-void* list_item_get_mut(ListItem* item)
+void* list_item_get_mut(cstl_list_item* item)
 {
     return item->content;
 }
-ListItem* list_item_insert_after(ListItem* item, void* content)
+cstl_list_item* list_item_insert_after(cstl_list_item* item, void* content)
 {
-    ListItem* new_item = (ListItem*)malloc(sizeof(ListItem));
+    cstl_list_item* new_item = (cstl_list_item*)malloc(sizeof(cstl_list_item));
     list_item_init(new_item, item->list, content, item->next, item);
     if (item->next)
         item->next->previous = new_item;
@@ -178,9 +178,9 @@ ListItem* list_item_insert_after(ListItem* item, void* content)
     item->next = new_item;
     return new_item;
 }
-ListItem* list_item_insert_before(ListItem* item, void* content)
+cstl_list_item* list_item_insert_before(cstl_list_item* item, void* content)
 {
-    ListItem* new_item = (ListItem*)malloc(sizeof(ListItem));
+    cstl_list_item* new_item = (cstl_list_item*)malloc(sizeof(cstl_list_item));
     list_item_init(new_item, item->list, content, item, item->previous);
     if (item->previous)
         item->previous->next = new_item;
@@ -189,23 +189,23 @@ ListItem* list_item_insert_before(ListItem* item, void* content)
     item->previous = new_item;
     return new_item;
 }
-const ListItem* list_item_get_next(const ListItem* item)
+const cstl_list_item* list_item_get_next(const cstl_list_item* item)
 {
     return item->next;
 }
-const ListItem* list_item_get_previous(const ListItem* item)
+const cstl_list_item* list_item_get_previous(const cstl_list_item* item)
 {
     return item->previous;
 }
-ListItem* list_item_get_next_mut(ListItem* item)
+cstl_list_item* list_item_get_next_mut(cstl_list_item* item)
 {
     return item->next;
 }
-ListItem* list_item_get_previous_mut(ListItem* item)
+cstl_list_item* list_item_get_previous_mut(cstl_list_item* item)
 {
     return item->previous;
 }
-ListItem* list_item_advance(ListItem* item, int n)
+cstl_list_item* list_item_advance(cstl_list_item* item, int n)
 {
     if (n==0)
         return item;
