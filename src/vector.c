@@ -1,18 +1,8 @@
 #include <cstlike/vector.h>
 #include <string.h>
 
-typedef struct cstl_vector_t
-{
-    unsigned char* data;
-    size_t size;
-    size_t capacity;
-    size_t size_item;
-    deleter_t deleter;
-} cstl_vector;
-
 cstl_vector* vector_new(size_t size_item, deleter_t deleter)
 {
-    
     cstl_vector* res = malloc(sizeof(cstl_vector));
     vector_init(res, size_item, deleter);
     return res;

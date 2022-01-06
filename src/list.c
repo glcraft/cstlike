@@ -2,22 +2,6 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-
-typedef struct cstl_list_item_t
-{
-    void* content;
-    cstl_list_item* previous;
-    cstl_list_item* next;
-    cstl_list* list;
-} cstl_list_item;
-
-typedef struct cstl_list_t
-{
-    void (*deleter)(void*);
-    cstl_list_item* first;
-    cstl_list_item* last;
-} cstl_list;
-
 void list_item_init(cstl_list_item* item, cstl_list* list, void* content, cstl_list_item* next, cstl_list_item* previous);
 
 //cstl_list
@@ -106,7 +90,7 @@ const cstl_list_item* list_find(const cstl_list* list, void* to_search)
 }
 cstl_list_item* list_find_mut(cstl_list* list, void* to_search)
 {
-    for(cstl_list_item* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
+    for(cstl_list_item* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next_mut(it))
     {
         if (it->content == to_search)
             return it;
@@ -124,7 +108,7 @@ const cstl_list_item* list_find_if(const cstl_list* list, char(*callback_finder)
 }
 cstl_list_item* list_find_if_mut(cstl_list* list, char(*callback_finder)(void*))
 {
-    for(cstl_list_item* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next(it))
+    for(cstl_list_item* it = list_get_first_item_mut(list); it!=NULL; it = list_item_get_next_mut(it))
     {
         if (callback_finder(it->content))
             return it;

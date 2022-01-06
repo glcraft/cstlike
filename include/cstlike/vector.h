@@ -7,7 +7,14 @@
 extern "C" {
 #endif
 
-typedef struct cstl_vector_t cstl_vector;
+typedef struct cstl_vector_t
+{
+    unsigned char* data;
+    size_t size;
+    size_t capacity;
+    size_t size_item;
+    deleter_t deleter;
+} cstl_vector;
 
 /// cstl_vector constructor and destructor
 cstl_vector* vector_new(size_t size_item, deleter_t deleter);

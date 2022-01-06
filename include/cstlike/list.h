@@ -8,8 +8,22 @@ extern "C" {
 #endif
 
 typedef struct cstl_list_item_t cstl_list_item;
-
 typedef struct cstl_list_t cstl_list;
+
+typedef struct cstl_list_item_t
+{
+    void* content;
+    cstl_list_item* previous;
+    cstl_list_item* next;
+    cstl_list* list;
+} cstl_list_item;
+
+typedef struct cstl_list_t
+{
+    void (*deleter)(void*);
+    cstl_list_item* first;
+    cstl_list_item* last;
+} cstl_list;
 
 //cstl_list
 cstl_list* list_new(deleter_t);
@@ -33,8 +47,10 @@ void list_item_free(cstl_list_item* item);
 void list_item_remove(cstl_list_item* item);
 const void* list_item_get(const cstl_list_item* item);
 void* list_item_get_mut(cstl_list_item* item);
-cstl_list_item* list_item_get_next(cstl_list_item* item);
-cstl_list_item* list_item_get_previous(cstl_list_item* item);
+const cstl_list_item* list_item_get_next(const cstl_list_item* item);
+const cstl_list_item* list_item_get_previous(const cstl_list_item* item);
+cstl_list_item* list_item_get_next_mut(cstl_list_item* item);
+cstl_list_item* list_item_get_previous_mut(cstl_list_item* item);
 cstl_list_item* list_item_advance(cstl_list_item* item, int n);
 cstl_list_item* list_item_insert_after(cstl_list_item* item, void* content);
 cstl_list_item* list_item_insert_before(cstl_list_item* item, void* content);
