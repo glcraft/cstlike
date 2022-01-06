@@ -3,6 +3,10 @@
 #include "core.h"
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct cstl_vector_t cstl_vector;
 
 /// cstl_vector constructor and destructor
@@ -32,5 +36,9 @@ size_t vector_capacity(const cstl_vector* vect);
 const void* vector_data(const cstl_vector* vect);
 void* vector_data_mut(cstl_vector* vect);
 deleter_t vector_deleter(const cstl_vector* vect);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif

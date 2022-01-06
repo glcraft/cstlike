@@ -3,6 +3,10 @@
 
 #include "core.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct cstl_list_item_t cstl_list_item;
 
 typedef struct cstl_list_t cstl_list;
@@ -34,5 +38,9 @@ cstl_list_item* list_item_get_previous(cstl_list_item* item);
 cstl_list_item* list_item_advance(cstl_list_item* item, int n);
 cstl_list_item* list_item_insert_after(cstl_list_item* item, void* content);
 cstl_list_item* list_item_insert_before(cstl_list_item* item, void* content);
+
+#ifdef __cplusplus
+} //extern "C"
+#endif
 
 #endif
